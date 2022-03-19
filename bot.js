@@ -18,6 +18,9 @@ bot.hears('1000-7',ctx=>{
         bot.context.db.countingForDeadInsides = 1;
     }
 })
+bot.hears('доброго ранку',ctx=>{
+    ctx.reply('ми з України!');
+})
 
 // bot.telegram.setWebhook('https://mysterious-mesa-16110.herokuapp.com/' + token)
 
