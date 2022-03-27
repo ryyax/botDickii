@@ -21,7 +21,7 @@ function sleep(ms){
 }
 function reply(ctx,text){
     ctx.reply(text,{reply_to_message_id:ctx.message.message_id})
-}
+} 
 
 // functions
 let morningAnnouncement = function(){
