@@ -1,23 +1,21 @@
 {
-  "name": "botdickii",
+  "name": "botvolodka",
   "version": "1.0.0",
+  "description": "",
   "main": "bot.js",
   "engines": {
-    "node": "14.17.5",
-    "npm": "6.14.14"
+    "node": "16.14.2",
+    "npm": "8.5.0"
   },
   "scripts": {
     "start": "node bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://git.heroku.com/dickii.git"
-  },
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "telegraf": "^4.7.0"
+    "dotenv": "^16.0.0",
+    "http": "^0.0.1-security",
+    "telegraf": "^3.39.0"
   }
 }
