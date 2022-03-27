@@ -13,6 +13,7 @@ db = {
 const ryyax = 547015874;
 const s_mia_h = 681035579;
 const chatpasta = -1001517072456;
+const dickaya_genshtab = -699023771;
 
 // technical functions
 function sleep(ms){
@@ -23,20 +24,12 @@ function reply(ctx,text){
 }
 
 // functions
-let onesixteen = function (){
-    setInterval(()=>{
-        let date = new Date();
-        if(date.getUTCHours() === 22 && date.getUTCMinutes() === 16){
-            bot.telegram.sendMessage(chatpasta,'1:16');
-        }
-    }, 60000)
-}();
 let morningAnnouncement = function(){
     setInterval(()=>{
         let date = new Date();
         if(date.getUTCHours() === 6 && date.getUTCMinutes() === 0){
-            bot.telegram.sendMessage(chatpasta,morningMessage(date),{parse_mode:'HTML'}) 
-            daily_weather_lviv(chatpasta)           
+            bot.telegram.sendMessage(dickaya_genshtab,morningMessage(date),{parse_mode:'HTML'}) 
+            daily_weather_lviv(dickaya_genshtab)           
         }
     },60000)
 }();
