@@ -13,6 +13,9 @@ const chatpasta = -1001517072456;
 const dickaya_genshtab = -699023771;
 
 // database(temporary until i make the real database mazafaka)
+let db = {
+
+}
 client.connect();
 client.on('connect', ()=>notifyMe(`Successfuly connected to database`))
 client.on('error', err=>notifyMe(`Redis Client Error: ${err}`))
