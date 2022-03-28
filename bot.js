@@ -16,7 +16,6 @@ const dickaya_genshtab = -699023771;
 let db = {
 
 }
-client.connect();
 client.on('connect', ()=>notifyMe(`Successfuly connected to database`))
 client.on('error', err=>notifyMe(`Redis Client Error: ${err}`))
 
@@ -223,23 +222,33 @@ bot.hears(/паляниця/gi, ctx=>{
 // bot on
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
 bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
+bot.on('text', async ctx => {
+
+})
 
 // bot commands
 bot.command('/weather', ctx=>{
     daily_weather_lviv(ctx.message.chat.id)
 })
-bot.command('/addvoice',ctx=>{
-    // let voice_message_name = ctx.message.text.replace(/\/addvoice /, '');
-    if(ctx.message.chat.id === ryyax){
-        if(ctx.message.reply_to_message){
-            client.set(ctx.message.text.replace(/\/addvoice /, '').toLowerCase(), ctx.message.reply_to_message.voice.file_id, function (err,reply){
-                bot.telegram.sendMessage(ryyax,`Error: ${err}\n Success: ${reply}`)
-            })
-            notifyMe(`added: ${ctx.message.text.replace(/\/addvoice /, '')} - ${ctx.message.reply_to_message.voice.file_id}`)
-        } else {
-           reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
-        }
+bot.command('/addvoice', async ctx=>{
+    client.connect();
+    let voice_message_name = ctx.message.text.replace(/\/addvoice /, '').toLowerCase();
+    let voice_message_list = [];
+    let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
+    if(client.exists(voice_message_list_id)){
+        voice_message_list = await client.get(voice_message_list_id)
     }
+    if(ctx.message.reply_to_message){
+        client.set(voice_message_name, ctx.message.reply_to_message.voice.file_id, function (err,reply){
+            bot.telegram.sendMessage(ryyax,`Error: ${err}\n Success: ${reply}`)
+        })
+        notifyMe(`added: ${voice_message_name} - ${ctx.message.reply_to_message.voice.file_id}`)
+    } else if(ctx.message.text === '/addvoice'){
+        reply(ctx, 'Вкажіть назву голосового повідомлення - "/addvoice *назва*"')
+    } else {
+        reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
+    }
+    client.disconnect();
 })
 
 // test
