@@ -16,10 +16,6 @@ const dickaya_genshtab = -699023771;
 client.connect();
 client.on('connect', ()=>notifyMe(`Successfuly connected to database`))
 client.on('error', err=>notifyMe(`Redis Client Error: ${err}`))
-client.set('test','123');
-notifyMe(client.get('test'), function(err,reply){
-    console.log(reply)
-})
 
 // technical functions
 function sleep(ms){
@@ -213,7 +209,13 @@ bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
     reply(ctx, ctx.message.text.replace(/процько/gi, 'хуй'))
 })
-// bot.hears(/паляниця/gi, ctx=>ctx.replyWithVoice(client.get()))
+bot.hears(/^паляниця/gi, ctx=>{
+    new Promise((resolve,reject)=>{
+        resolve(client.get('паляниця'))
+    }).then(data=>{
+        ctx.replyWithVoice(data,{reply_to_message_id:ctx.message.message_id});
+    })
+})
 
 // bot on
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
@@ -224,20 +226,17 @@ bot.command('/weather', ctx=>{
     daily_weather_lviv(ctx.message.chat.id)
 })
 bot.command('/addvoice',ctx=>{
+    // let voice_message_name = ctx.message.text.replace(/\/addvoice /, '');
     if(ctx.message.chat.id === ryyax){
-        // reply(ctx, ctx.message.text.replace(/\/addvoice /, ''))
         if(ctx.message.reply_to_message){
-            reply(ctx, ctx.message.reply_to_message.voice.file_id);
-            client.set(ctx.message.text.replace(/\/addvoice /, '').toString(), ctx.message.reply_to_message.voice.file_id, function (err,reply){
+            client.set(ctx.message.text.replace(/\/addvoice /, '').toLowerCase(), ctx.message.reply_to_message.voice.file_id, function (err,reply){
                 bot.telegram.sendMessage(ryyax,`Error: ${err}\n Success: ${reply}`)
             })
+            notifyMe(`added: ${ctx.message.text.replace(/\/addvoice /, '')} - ${ctx.message.reply_to_message.voice.file_id}`)
         } else {
            reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
         }
     }
-})
-bot.command('/getvoices',ctx=>{
-    reply(ctx,client.get('pal'))
 })
 
 // test
