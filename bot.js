@@ -16,6 +16,7 @@ const dickaya_genshtab = -699023771;
 let db = {
 
 }
+client.connect();
 client.on('connect', ()=>notifyMe(`Successfuly connected to database`))
 client.on('error', err=>notifyMe(`Redis Client Error: ${err}`))
 
@@ -211,13 +212,13 @@ bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
     reply(ctx, ctx.message.text.replace(/процько/gi, 'хуй'))
 })
-bot.hears(/паляниця/gi, ctx=>{
-    new Promise((resolve,reject)=>{
-        resolve(client.get('паляниця'))
-    }).then(data=>{
-        ctx.replyWithVoice(data,{reply_to_message_id:ctx.message.message_id});
-    })
-})
+// bot.hears(/паляниця/gi, ctx=>{
+//     new Promise((resolve,reject)=>{
+//         resolve(client.get('паляниця'))
+//     }).then(data=>{
+//         ctx.replyWithVoice(data,{reply_to_message_id:ctx.message.message_id});
+//     })
+// })
 
 // bot on
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
@@ -231,25 +232,48 @@ bot.command('/weather', ctx=>{
     daily_weather_lviv(ctx.message.chat.id)
 })
 bot.command('/addvoice', async ctx=>{
-    client.connect();
     let voice_message_name = ctx.message.text.replace(/\/addvoice /, '').toLowerCase();
     let voice_message_list = [];
     let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
     if(client.exists(voice_message_list_id)){
-        voice_message_list = await client.get(voice_message_list_id)
+        let promise = new Promise((resolve,reject)=>{
+            resolve(client.get(voice_message_list_id))
+        })
+        voice_message_list = await promise;
     }
-    if(ctx.message.reply_to_message){
+    if(ctx.message.reply_to_message && voice_message_name != '/addvoice'){
         client.set(voice_message_name, ctx.message.reply_to_message.voice.file_id, function (err,reply){
             bot.telegram.sendMessage(ryyax,`Error: ${err}\n Success: ${reply}`)
         })
-        notifyMe(`added: ${voice_message_name} - ${ctx.message.reply_to_message.voice.file_id}`)
-    } else if(ctx.message.text === '/addvoice'){
+        voice_message_list.push(voice_message_name);
+        client.set(voice_message_list_id,voice_message_list);
+        notifyMe(`added: ${voice_message_name} - ${ctx.message.reply_to_message.voice.file_id}\n to: ${voice_message_list_id} - ${voice_message_list}`)
+
+    } else if(voice_message_name === '/addvoice'){
         reply(ctx, 'Вкажіть назву голосового повідомлення - "/addvoice *назва*"')
     } else {
         reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
     }
-    client.disconnect();
 })
+bot.command('voicelist', (ctx)=>{
+    let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
+    new Promise((resolve,reject)=>{
+        resolve(client.get(voice_message_list_id));
+    }).then(data=>{
+        let voice_message_list = promise;
+        console.log(voice_message_list)
+    })
+})
+
+// let fn = async function(){
+//     client.connect();
+//     let promise = new Promise((resolve,reject)=>{
+//         resolve(client.get('11111'))
+//     })
+//     let d = await promise;
+//     console.log(d);
+//     client.disconnect();
+// }()
 
 // test
 bot.hears('test',ctx=>{
