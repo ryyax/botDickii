@@ -2,7 +2,7 @@ const {Telegraf} = require('telegraf')
 require('dotenv').config()
 const http = require('http');
 const { count } = require('console');
-const bot = new Telegraf(process.env.BOT_TOKEN); 
+const bot = new Telegraf(process.env.BOT_TOKEN, {username:'@dickii_bot'}); 
 const redis = require("redis");
 const client = redis.createClient({url: process.env.REDIS_URL});
 
@@ -221,11 +221,7 @@ bot.hears(/процько/gi, ctx=>{
 // })
 
 // bot on
-// bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
 bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
-bot.on('text', async ctx => {
-
-})
 
 // bot commands
 bot.command('/weather', ctx=>{
@@ -264,16 +260,6 @@ bot.command('voicelist', (ctx)=>{
         console.log(voice_message_list)
     })
 })
-
-// let fn = async function(){
-//     client.connect();
-//     let promise = new Promise((resolve,reject)=>{
-//         resolve(client.get('11111'))
-//     })
-//     let d = await promise;
-//     console.log(d);
-//     client.disconnect();
-// }()
 
 // test
 bot.hears('test',ctx=>{
