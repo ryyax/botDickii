@@ -3,11 +3,8 @@ require('dotenv').config()
 const http = require('http');
 const { count } = require('console');
 const bot = new Telegraf(process.env.BOT_TOKEN); 
-
-// database(temporary until i make the real database mazafaka)
-db = {
-   
-}
+const redis = require("redis");
+const client = redis.createClient({url: process.env.REDIS_URL});
 
 // chats
 const ryyax = 547015874;
@@ -15,12 +12,24 @@ const s_mia_h = 681035579;
 const chatpasta = -1001517072456;
 const dickaya_genshtab = -699023771;
 
+// database(temporary until i make the real database mazafaka)
+client.connect();
+client.on('connect', ()=>notifyMe(`Successfuly connected to database`))
+client.on('error', err=>notifyMe(`Redis Client Error: ${err}`))
+client.set('test','123');
+notifyMe(client.get('test'), function(err,reply){
+    console.log(reply)
+})
+
 // technical functions
 function sleep(ms){
     return new Promise(resolve=>setTimeout(resolve,ms));
 }
 function reply(ctx,text){
     ctx.reply(text,{reply_to_message_id:ctx.message.message_id})
+}
+function notifyMe(text, extra = {}){
+    bot.telegram.sendMessage(ryyax, text, extra);
 }
 
 // functions
@@ -204,7 +213,7 @@ bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
     reply(ctx, ctx.message.text.replace(/процько/gi, 'хуй'))
 })
-bot.hears(/паляниця/gi, ctx=>ctx.replyWithVoice('AwACAgIAAxkBAAIDZ2JAer8F83BgHpcXSEY74oh73Va7AAJ4HAACjKPwSZOhMmPbVBVIIwQ'))
+// bot.hears(/паляниця/gi, ctx=>ctx.replyWithVoice(client.get()))
 
 // bot on
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
@@ -213,6 +222,22 @@ bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви пла�
 // bot commands
 bot.command('/weather', ctx=>{
     daily_weather_lviv(ctx.message.chat.id)
+})
+bot.command('/addvoice',ctx=>{
+    if(ctx.message.chat.id === ryyax){
+        // reply(ctx, ctx.message.text.replace(/\/addvoice /, ''))
+        if(ctx.message.reply_to_message){
+            reply(ctx, ctx.message.reply_to_message.voice.file_id);
+            client.set(ctx.message.text.replace(/\/addvoice /, '').toString(), ctx.message.reply_to_message.voice.file_id, function (err,reply){
+                bot.telegram.sendMessage(ryyax,`Error: ${err}\n Success: ${reply}`)
+            })
+        } else {
+           reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
+        }
+    }
+})
+bot.command('/getvoices',ctx=>{
+    reply(ctx,client.get('pal'))
 })
 
 // test

@@ -16,6 +16,7 @@
   "dependencies": {
     "dotenv": "^16.0.0",
     "http": "^0.0.1-security",
+    "redis": "^4.0.4",
     "telegraf": "^3.39.0"
   }
 }
