@@ -209,7 +209,7 @@ bot.hears(/Ы/gi, ctx=>reply(ctx,'Кажи слово паляниця!'))
 bot.hears(/процько/gi, ctx=>{
     reply(ctx, ctx.message.text.replace(/процько/gi, 'хуй'))
 })
-bot.hears(/^паляниця/gi, ctx=>{
+bot.hears(/паляниця/gi, ctx=>{
     new Promise((resolve,reject)=>{
         resolve(client.get('паляниця'))
     }).then(data=>{
