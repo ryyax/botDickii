@@ -17,8 +17,6 @@ let db = {
 
 }
 client.connect();
-client.on('connect', ()=>notifyMe(`Successfuly connected to database`))
-client.on('error', err=>notifyMe(`Redis Client Error: ${err}`))
 
 // technical functions
 function sleep(ms){
@@ -220,51 +218,86 @@ bot.hears(/процько/gi, ctx=>{
 //     })
 // })
 
-// bot on
-bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
-
 // bot commands
 bot.command('/weather', ctx=>{
     daily_weather_lviv(ctx.message.chat.id)
 })
-bot.command('/addvoice', async ctx=>{
-    let voice_message_name = ctx.message.text.replace(/\/addvoice /, '').toLowerCase();
+bot.command('addvoice', async ctx=>{
+    let voice_message_name = ctx.message.text.replace(/\/addvoice.* /, '').toLowerCase();
     let voice_message_list = [];
     let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
-    if(client.exists(voice_message_list_id)){
-        let promise = new Promise((resolve,reject)=>{
-            resolve(client.get(voice_message_list_id))
-        })
-        voice_message_list = await promise;
+    let promise = new Promise((resolve,reject)=>{
+        resolve(client.get(voice_message_list_id));
+    })
+    let voice_message_list_from_database = await promise;
+    if(voice_message_list_from_database){
+        voice_message_list = voice_message_list_from_database.split(',');
     }
-    if(ctx.message.reply_to_message && voice_message_name != '/addvoice'){
-        client.set(voice_message_name, ctx.message.reply_to_message.voice.file_id, function (err,reply){
-            bot.telegram.sendMessage(ryyax,`Error: ${err}\n Success: ${reply}`)
-        })
-        voice_message_list.push(voice_message_name);
-        client.set(voice_message_list_id,voice_message_list);
-        notifyMe(`added: ${voice_message_name} - ${ctx.message.reply_to_message.voice.file_id}\n to: ${voice_message_list_id} - ${voice_message_list}`)
-
+    if(ctx.message.reply_to_message && voice_message_name != '/addvoice' && ctx.message.reply_to_message.voice){
+        if(!voice_message_list.includes(voice_message_name)){
+            client.set(ctx.message.chat.id.toString() + voice_message_name.toString(), ctx.message.reply_to_message.voice.file_id)
+            voice_message_list.push(voice_message_name);
+            console.log(voice_message_list);
+            client.set(voice_message_list_id,voice_message_list);
+            // reply(ctx, 'Голосове повідомлення успішно додано!')
+            reply(ctx, 'Валину свою забери. Голосовуха добавлена')
+            notifyMe(`added: ${voice_message_name} - ${ctx.message.reply_to_message.voice.file_id}\n to: ${voice_message_list_id} - ${voice_message_list}`)
+        } else{
+            // reply(ctx, 'Вже існує голосове повідомлення з такою назвою.')
+            reply(ctx, 'гайда включай фантазію і нову назву мені дай, таке вже є')
+        }
     } else if(voice_message_name === '/addvoice'){
-        reply(ctx, 'Вкажіть назву голосового повідомлення - "/addvoice *назва*"')
+        // reply(ctx, 'Вкажіть назву голосового повідомлення - "/addvoice *назва*"')
+        reply(ctx, '"/addvoice *назва*", назву дай бляха..')
+    } else if(!ctx.message.reply_to_message.voice){
+        // reply(ctx, 'Ви не відповідаєте на голосове повідомлення')
+        reply(ctx, 'це хіба голосове повідомлення? ну алло!')
     } else {
-        reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
+        // reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
+        reply(ctx, 'я шо Ванга, шоб знати яке саме голосове ти хцеш добавити?...')
     }
 })
-bot.command('voicelist', (ctx)=>{
+bot.command('voicelist', async (ctx)=>{
     let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
-    new Promise((resolve,reject)=>{
+    let promise = new Promise((resolve,reject)=>{
         resolve(client.get(voice_message_list_id));
-    }).then(data=>{
-        let voice_message_list = promise;
-        console.log(voice_message_list)
     })
+    let voice_message_list = await promise;
+    if(voice_message_list){
+        ctx.reply(`Назви збережених голосових повідомлень в даному чаті: <b>${voice_message_list.replace(/,/gi,', ')}</b>`,{parse_mode:'HTML'})
+    } else{
+        reply(ctx, 'У вас не додано жодного голосового повідомлення. Скористайтесь командою /addvoice, для того, щоб добавити голосове повідомлення')
+    }
+})
+bot.command('delvoice', ctx=>{
+    reply(ctx, 'в розробці. деліт ше не завезли')
 })
 
 // test
 bot.hears('test',ctx=>{
     ctx.reply(ctx.message)
 })
+
+// bot on
+// bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
+bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
+bot.on('text', async ctx=>{
+    let promise = new Promise((resolve)=>{
+        resolve(client.get('voice_message_list' + ctx.message.chat.id))
+    })
+    let voice_message_list = await promise;
+    if(voice_message_list){
+        voice_message_list = voice_message_list.split(',');
+        if(voice_message_list.includes(ctx.message.text.toLowerCase())){
+            let promis = new Promise((resolve)=>{
+                resolve(client.get(ctx.message.chat.id.toString() + ctx.message.text.toString().toLowerCase()));
+            })
+            let voice_message_id = await promis;
+            ctx.replyWithVoice(voice_message_id);
+        }    
+    } 
+})
+
 
 
 bot.launch();   
