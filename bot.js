@@ -95,9 +95,6 @@ function getTodayWeather(city_name, country_code){
 }
 
 // messages
-let d = new Date();
-console.log(d.getUTCHours())
-
 let morningMessage = date => {
 return `<b>Доброго ранку, товариство!</b>
 Сьогодні <b>${Math.floor((date.getTime()-new Date('February 24, 2022 03:40:00'))/1000/60/60/24) + 1}-й</b> день, як <span class="tg-spoiler">хуйло</span> напало на нас
