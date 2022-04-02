@@ -95,9 +95,12 @@ function getTodayWeather(city_name, country_code){
 }
 
 // messages
+let d = new Date();
+console.log(d)
+
 let morningMessage = date => {
 return `<b>Доброго ранку, товариство!</b>
-Сьогодні <b>${Math.floor((date.getTime()-new Date('February 24, 2022 03:40:00'))/1000/60/60/24)}-й</b> день, як <span class="tg-spoiler">хуйло</span> напало на нас
+Сьогодні <b>${Math.floor((date.getTime()-new Date('February 24, 2022 03:40:00'))/1000/60/60/24) + 1}-й</b> день, як <span class="tg-spoiler">хуйло</span> напало на нас
 Але ми тримаємось і будем триматись, <u>бо ми українці!</u>
 <b><i>Слава Україні!</i></b>`
 }
