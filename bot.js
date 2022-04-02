@@ -96,7 +96,7 @@ function getTodayWeather(city_name, country_code){
 
 // messages
 let d = new Date();
-console.log(d.getHours())
+console.log(d.getUTCHours())
 
 let morningMessage = date => {
 return `<b>Доброго ранку, товариство!</b>
