@@ -222,7 +222,7 @@ bot.command('/weather', ctx=>{
     daily_weather_lviv(ctx.message.chat.id)
 })
 bot.command('addvoice', async ctx=>{
-    client.connect();
+    await client.connect();
     let voice_message_name = ctx.message.text.replace(/\/addvoice.* /, '').toLowerCase();
     let voice_message_list = [];
     let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
@@ -256,10 +256,10 @@ bot.command('addvoice', async ctx=>{
         // reply(ctx, 'Дай відповідь на голосове повідомлення, яке бажаєш зберегти') 
         reply(ctx, 'я шо Ванга, шоб знати яке саме голосове ти хцеш добавити?...')
     }
-    client.disconnect();
+    await client.disconnect();
 })
 bot.command('voicelist', async (ctx)=>{
-    client.connect()
+    await client.connect()
     let voice_message_list_id = 'voice_message_list' + ctx.message.chat.id;
     let promise = new Promise((resolve,reject)=>{
         resolve(client.get(voice_message_list_id));
@@ -270,7 +270,7 @@ bot.command('voicelist', async (ctx)=>{
     } else{
         reply(ctx, 'У вас не додано жодного голосового повідомлення. Скористайтесь командою /addvoice, для того, щоб добавити голосове повідомлення')
     }
-    client.disconnect();
+    await client.disconnect();
 })
 bot.command('delvoice', ctx=>{
     reply(ctx, 'в розробці. деліт ше не завезли')
@@ -285,7 +285,7 @@ bot.hears('test',ctx=>{
 // bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
 bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
 bot.on('text', async ctx=>{
-    client.connect();
+    await client.connect();
     let promise = new Promise((resolve)=>{
         resolve(client.get('voice_message_list' + ctx.message.chat.id))
     })
@@ -300,7 +300,7 @@ bot.on('text', async ctx=>{
             ctx.replyWithVoice(voice_message_id);
         }    
     } 
-    client.disconnect();
+    await client.disconnect();
 })
 
 
