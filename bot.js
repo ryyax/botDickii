@@ -214,7 +214,7 @@ bot.hears('Кажи слово паляниця!', ctx=>{
     reply(ctx,'Кажи слово паляниця!');
 })
 bot.hears(/паляніте|поляніте|паляніца/gi, ctx=>{
-    ctx.replyWithSticker('AgADdhQAArhE2Eg')
+    ctx.replyWithSticker('CAACAgIAAxkBAAIS9WJT4c_xJfaWYxDWH7zyd8nSUuEoAAJ2FAACuETYSNwh06eAZXcqIwQ')
 })
 
 // bot commands
