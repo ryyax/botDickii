@@ -213,12 +213,8 @@ bot.hears(/процько/gi, ctx=>{
 bot.hears('Кажи слово паляниця!', ctx=>{
     reply(ctx,'Кажи слово паляниця!');
 })
-// bot.hears(/паляниця/gi, ctx=>{
-//     new Promise((resolve,reject)=>{
-//         resolve(client.get('паляниця'))
-//     }).then(data=>{
-//         ctx.replyWithVoice(data,{reply_to_message_id:ctx.message.message_id});
-//     })
+// bot.hears(/паляніте|поляніте|паляніца/gi, ctx=>{
+//     ctx.replyWithSticker()
 // })
 
 // bot commands
@@ -282,7 +278,7 @@ bot.hears('test',ctx=>{
 })
 
 // bot on
-// bot.on('sticker', ctx => reply(ctx, 'заєбеш'))
+bot.on('sticker', ctx => reply(ctx, ctx.message))
 bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
 bot.on('text', async ctx=>{
     let promise = new Promise((resolve)=>{
