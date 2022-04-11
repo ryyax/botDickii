@@ -278,7 +278,7 @@ bot.hears('test',ctx=>{
 })
 
 // bot on
-bot.on('sticker', ctx => reply(ctx, ctx.message))
+// bot.on('sticker', ctx => reply(ctx, ctx.message))
 bot.on('voice', ctx => reply(ctx,'блять в тебе шо букви платні?'))
 bot.on('text', async ctx=>{
     let promise = new Promise((resolve)=>{
