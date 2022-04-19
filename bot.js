@@ -4,7 +4,7 @@ const http = require('http');
 const { count } = require('console');
 const bot = new Telegraf(process.env.BOT_TOKEN, {username:'@dickii_bot'}); 
 const redis = require("redis");
-const client = redis.createClient({url: process.env.REDIS_URL});
+// const client = redis.createClient({url: process.env.REDIS_URL});
 
 // chats
 const ryyax = 547015874;
@@ -16,7 +16,22 @@ const dickaya_genshtab = -699023771;
 let db = {
 
 }
-client.connect();
+class RemoteDataBase{
+    static database_client;
+    static getInstance(){
+        if(RemoteDataBase.database_client){
+            if(!RemoteDataBase.database_client.isOpen){
+                RemoteDataBase.database_client.connect();
+            }
+            return RemoteDataBase.database_client;
+        }
+        RemoteDataBase.database_client = redis.createClient({url: process.env.REDIS_URL});
+        RemoteDataBase.database_client.connect();
+        return RemoteDataBase.database_client;
+    }
+}
+const client = RemoteDataBase.getInstance();
+console.log(client)
 
 // technical functions
 function sleep(ms){
@@ -228,7 +243,6 @@ bot.command('addvoice', async ctx=>{
     let voice_message_name = ctx.message.text.replace(regex, '').toLowerCase();
     if(restricted_symbols.test(voice_message_name)){
         reply(ctx, 'Невірний символ "/" в назві голосового повідомлення')
-        client.disconnect();
         return
     }
     let voice_message_list = [];
